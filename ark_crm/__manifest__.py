@@ -6,10 +6,10 @@
     "website": "https://arkana.co.id",
     "author": "PT. Arkana Solusi Digital",
     "depends": [
-        "crm",
+        "crm", "web_m2x_options", "crm_lead_funnel_type", "partner_contact_job_position", "partner_contact_department"
     ],
     "data": [
-        # "views/view.xml",
+        "views/view.xml",
     ],
     "installable": True,
     "auto_install": False,
