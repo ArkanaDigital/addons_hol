@@ -6,7 +6,7 @@
     "website": "https://arkana.co.id",
     "author": "PT. Arkana Solusi Digital",
     "depends": [
-        "crm", "web_m2x_options", "crm_lead_funnel_type", "partner_contact_job_position", "partner_contact_department"
+        "crm", "web_m2x_options", "crm_lead_funnel_type", "partner_contact_job_position", "partner_contact_department", "crm_lead_last_update_from_openchatter"
     ],
     "data": [
         "views/view.xml",
