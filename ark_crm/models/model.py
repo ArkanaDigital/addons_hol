@@ -34,4 +34,3 @@ class CrmLead(models.Model):
                 )[0].create_date
             
             document.last_update_openchatter = last_update_openchatter
-            # _logger.info(f'Update last_update_openchatter {document.id}')
