@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- crm.lead inherit form view -->
-    <record id="crm.lead" model="ir.ui.view">
+    <record id="crm_case_form_view_oppor_inherit" model="ir.ui.view">
         <field name="name">crm.lead.inherit.view.form</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
@@ -33,7 +33,7 @@
             <field name="source_id" position="attributes">
                 <attribute name="required">1</attribute>
             </field>
-            
+
         </field>
     </record>
  
@@ -44,6 +44,17 @@
         <field name="arch" type="xml">
             <field name="funnel_type_id" position="attributes">
                 <attribute name="required">1</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="crm_case_form_view_oppor_inherit_day_on_stage" model="ir.ui.view">
+        <field name="name">crm.lead.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_lead_day_on_stage.crm_case_form_view_oppor" />
+        <field name="arch" type="xml">
+            <field name="day_on_stage" position="after">
+                <field name="day_from_last_chatter" force_save="1" readonly="1"/>
             </field>
         </field>
     </record>
@@ -168,6 +179,17 @@
             <xpath expr="//field[@name='child_ids']/form//field[@name='department_id']" position="attributes">
                 <attribute name="attrs">{'invisible': [('is_company','=', True)], 'required': [('is_company','=', False)]}</attribute>
             </xpath>
+        </field>
+    </record>
+
+    <record id="sales_team_form_view_in_crm_day_openchatter" model="ir.ui.view">
+        <field name="name">crm.team.day.openchatter</field>
+        <field name="model">crm.team</field>
+        <field name="inherit_id" ref="crm_lead_auto_archieve.sales_team_form_view_in_crm" />
+        <field name="arch" type="xml">
+            <field name="day_limit" position="after">
+                <field name="day_limit_openchatter"/>
+            </field>
         </field>
     </record>
 </odoo>
