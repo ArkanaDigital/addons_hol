@@ -13,8 +13,8 @@ class CrmLead(models.Model):
     @api.constrains('tag_ids')
     def constrains_tag_ids(self):
         for rec in self:
-            if len(rec.tag_ids) < 2:
-                raise ValidationError('Tags need to be filled with at least 2 values')
+            if len(rec.tag_ids) < 2 and len(rec.tag_ids.mapped('color')) < 2:
+                raise ValidationError('Tags need to be filled with at least 2 diffrent values')
 
     @api.depends("message_ids")
     @api.multi
