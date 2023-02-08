@@ -48,7 +48,7 @@
         </field>
     </record>
 
-    <record id="crm_case_form_view_oppor_inherit_day_on_stage" model="ir.ui.view">
+    <!-- <record id="crm_case_form_view_oppor_inherit_day_on_stage" model="ir.ui.view">
         <field name="name">crm.lead.form</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm_lead_day_on_stage.crm_case_form_view_oppor" />
@@ -57,7 +57,7 @@
                 <field name="day_from_last_chatter" force_save="1" readonly="1"/>
             </field>
         </field>
-    </record>
+    </record> -->
 
     <record id="view_partner_form_inherit" model="ir.ui.view">
         <field name="name">res.partner.form</field>
