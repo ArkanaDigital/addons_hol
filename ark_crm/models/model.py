@@ -36,7 +36,7 @@ class CrmLead(models.Model):
             
             document.last_update_openchatter = last_update_openchatter
             document.day_from_last_chatter = document._compute_day_from_last_chatter()
-            _logger.info(f'update id crm.lead {document.id}')
+            _logger.info('update id crm.lead: %s' % (document.id))
 
     @api.multi
     def _compute_day_from_last_chatter(self):
