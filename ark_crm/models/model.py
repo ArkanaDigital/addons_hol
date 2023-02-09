@@ -35,7 +35,6 @@ class CrmLead(models.Model):
                 )[0].create_date
             
             document.last_update_openchatter = last_update_openchatter
-            document.day_from_last_chatter = document._compute_day_from_last_chatter()
             _logger.info('update id crm.lead: %s' % (document.id))
 
     @api.multi
@@ -47,12 +46,11 @@ class CrmLead(models.Model):
                 day_from_last_chatter = abs((dt_now - last_update_openchatter).days)
             else:
                 day_from_last_chatter = 0
-            return day_from_last_chatter
+            document.day_from_last_chatter = day_from_last_chatter
             
     day_from_last_chatter = fields.Float(
         string="Day From Last Update Openchatter",
-        compute="_compute_last_update_openchatter",
-        store=True, index=True
+        compute="_compute_day_from_last_chatter"
     )
 
 
