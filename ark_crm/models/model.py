@@ -66,7 +66,7 @@ class CrmTeam(models.Model):
         obj_crm_lead = self.env["crm.lead"]
         today = date.today()
         for auto_archieve in self.stage_auto_archieve_ids:
-            date_day_limit = today + timedelta(days=-(auto_archieve.day_limit_openchatter + 1))
+            date_day_limit = today + timedelta(days=-(auto_archieve.day_limit_openchatter))
             date_day_limit = date_day_limit.strftime("%Y-%m-%d %H:%M:%S")
             criteria = [
                 ("stage_id", "=", auto_archieve.stage_id.id),
