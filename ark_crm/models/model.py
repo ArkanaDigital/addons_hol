@@ -20,7 +20,7 @@ class CrmLead(models.Model):
             if len(rec.tag_ids) < 2 or len(set(rec.tag_ids.mapped('color'))) < 2:
                 raise ValidationError('Tags need to be filled with at least 2 diffrent values')
 
-    @api.depends("message_ids")
+    @api.depends("write_date")
     @api.multi
     def _compute_last_update_openchatter(self):
         for document in self:
