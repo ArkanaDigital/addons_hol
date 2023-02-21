@@ -70,7 +70,7 @@ class CrmTeam(models.Model):
         now_utc = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(tz.gettz('UTC'))
         now_localize = now_utc.astimezone(tz.gettz(self.env.user.tz))
         for auto_archieve in self.stage_auto_archieve_ids:
-            date_day_limit_openchatter = now_localize + timedelta(days=-(auto_archieve.day_limit_openchatter))
+            date_day_limit_openchatter = now_localize + timedelta(days=-(auto_archieve.day_limit_openchatter + 1))
             date_day_limit_openchatter = date_day_limit_openchatter.replace(hour=7, minute=0, second=0, microsecond=0)
             date_day_limit_openchatter = date_day_limit_openchatter.strftime("%Y-%m-%d %H:%M:%S")
             criteria = [
