@@ -67,7 +67,7 @@ class CrmTeam(models.Model):
     def _auto_archieve(self):
         self.ensure_one()
         obj_crm_lead = self.env["crm.lead"]
-        now_utc = datetime.now().astimezone(tz.gettz('UTC'))
+        now_utc = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(tz.gettz('UTC'))
         now_localize = now_utc.astimezone(tz.gettz(self.env.user.tz))
         for auto_archieve in self.stage_auto_archieve_ids:
             date_day_limit_openchatter = now_localize + timedelta(days=-(auto_archieve.day_limit_openchatter + 1))
