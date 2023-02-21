@@ -2,6 +2,7 @@ from odoo import fields, models, api, SUPERUSER_ID
 from odoo.exceptions import ValidationError
 from logging import getLogger
 from datetime import datetime, timedelta, date
+import pytz
 
 _logger = getLogger(__name__)
 
@@ -19,7 +20,7 @@ class CrmLead(models.Model):
             if len(rec.tag_ids) < 2 or len(set(rec.tag_ids.mapped('color'))) < 2:
                 raise ValidationError('Tags need to be filled with at least 2 diffrent values')
 
-    @api.depends("message_ids")
+    @api.depends("write_date")
     @api.multi
     def _compute_last_update_openchatter(self):
         for document in self:
@@ -64,15 +65,17 @@ class CrmTeam(models.Model):
     def _auto_archieve(self):
         self.ensure_one()
         obj_crm_lead = self.env["crm.lead"]
-        today = date.today()
+        now_utc = datetime.now()
+        now_localize = now_utc.astimezone(pytz.timezone(self.env.user.tz))
         for auto_archieve in self.stage_auto_archieve_ids:
-            date_day_limit = today + timedelta(days=-(auto_archieve.day_limit_openchatter))
-            date_day_limit = date_day_limit.strftime("%Y-%m-%d %H:%M:%S")
+            date_day_limit_openchatter = now_localize + timedelta(days=-(auto_archieve.day_limit_openchatter))
+            date_day_limit_openchatter = date_day_limit_openchatter.astimezone(pytz.timezone('UTC'))
+            date_day_limit_openchatter = date_day_limit_openchatter.strftime("%Y-%m-%d %H:%M:%S")
             criteria = [
                 ("stage_id", "=", auto_archieve.stage_id.id),
                 ("active", "=", True),
                 '|', ("day_on_stage", ">", auto_archieve.day_limit),
-                ("last_update_openchatter", "<", date_day_limit),
+                ("last_update_openchatter", "<", date_day_limit_openchatter),
             ]
             leads = obj_crm_lead.search(criteria)
             if leads:
