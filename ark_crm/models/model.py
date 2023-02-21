@@ -3,6 +3,8 @@ from odoo.exceptions import ValidationError
 from logging import getLogger
 from datetime import datetime, timedelta, date
 import pytz
+from dateutil import tz
+
 
 _logger = getLogger(__name__)
 
@@ -65,11 +67,11 @@ class CrmTeam(models.Model):
     def _auto_archieve(self):
         self.ensure_one()
         obj_crm_lead = self.env["crm.lead"]
-        now_utc = datetime.now()
-        now_localize = now_utc.astimezone(pytz.timezone(self.env.user.tz))
+        now_utc = datetime.now().astimezone(tz.gettz('UTC'))
+        now_localize = now_utc.astimezone(tz.gettz(self.env.user.tz))
         for auto_archieve in self.stage_auto_archieve_ids:
             date_day_limit_openchatter = now_localize + timedelta(days=-(auto_archieve.day_limit_openchatter))
-            date_day_limit_openchatter = date_day_limit_openchatter.astimezone(pytz.timezone('UTC'))
+            date_day_limit_openchatter = date_day_limit_openchatter.astimezone(tz.gettz('UTC'))
             date_day_limit_openchatter = date_day_limit_openchatter.strftime("%Y-%m-%d %H:%M:%S")
             criteria = [
                 ("stage_id", "=", auto_archieve.stage_id.id),
