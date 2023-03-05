@@ -1,7 +1,10 @@
 from odoo import fields, models, api, SUPERUSER_ID
 from odoo.exceptions import ValidationError
 from logging import getLogger
-from datetime import datetime
+from datetime import datetime, timedelta, date
+import pytz
+from dateutil import tz
+
 
 _logger = getLogger(__name__)
 
@@ -11,13 +14,15 @@ class CrmLead(models.Model):
 
     _order = "last_update_openchatter desc,priority desc,activity_date_deadline,id desc"
 
+    active = fields.Boolean(track_visibility='onchange')
+
     @api.constrains('tag_ids')
     def constrains_tag_ids(self):
         for rec in self:
             if len(rec.tag_ids) < 2 or len(set(rec.tag_ids.mapped('color'))) < 2:
                 raise ValidationError('Tags need to be filled with at least 2 diffrent values')
 
-    @api.depends("message_ids")
+    @api.depends("write_date")
     @api.multi
     def _compute_last_update_openchatter(self):
         for document in self:
@@ -35,7 +40,7 @@ class CrmLead(models.Model):
                 )[0].create_date
             
             document.last_update_openchatter = last_update_openchatter
-            _logger.info('update id crm.lead: %s' % (document.id))
+            _logger.info('update last_update_openchatter id crm.lead: %s' % (document.id))
 
     @api.multi
     def _compute_day_from_last_chatter(self):
@@ -47,6 +52,7 @@ class CrmLead(models.Model):
             else:
                 day_from_last_chatter = 0
             document.day_from_last_chatter = day_from_last_chatter
+            # _logger.info('update day_from_last_chatter id crm.lead: %s' % (document.id))
             
     day_from_last_chatter = fields.Float(
         string="Day From Last Update Openchatter",
@@ -61,12 +67,18 @@ class CrmTeam(models.Model):
     def _auto_archieve(self):
         self.ensure_one()
         obj_crm_lead = self.env["crm.lead"]
+        # now_utc = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(tz.gettz('UTC'))
+        # now_localize = now_utc.astimezone(tz.gettz(self.env.user.tz))
+        now_utc = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(tz.gettz('UTC'))
         for auto_archieve in self.stage_auto_archieve_ids:
+            date_day_limit_openchatter = now_utc + timedelta(days=-(auto_archieve.day_limit_openchatter))
+            date_day_limit_openchatter = date_day_limit_openchatter.replace(minute=0, second=0, microsecond=0)
+            date_day_limit_openchatter = date_day_limit_openchatter.strftime("%Y-%m-%d %H:%M:%S")
             criteria = [
                 ("stage_id", "=", auto_archieve.stage_id.id),
                 ("active", "=", True),
                 '|', ("day_on_stage", ">", auto_archieve.day_limit),
-                ("day_from_last_chatter", ">", auto_archieve.day_limit_openchatter),
+                ("last_update_openchatter", "<", date_day_limit_openchatter),
             ]
             leads = obj_crm_lead.search(criteria)
             if leads:
