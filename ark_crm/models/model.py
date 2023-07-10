@@ -84,7 +84,12 @@ class CrmTeam(models.Model):
             if leads:
                 for lead in leads:
                     lead.write({"active": False})
-
+                    if lead.day_on_stage > auto_archieve.day_limit and lead.last_update_openchatter < date_day_limit_openchatter:
+                        lead.message_post(body=f"Archived because Day on Stage is {lead.day_on_stage}. It's more than {auto_archieve.day_limit} days. And Day From Last Update Openchatter is {lead.day_from_last_chatter}. It's more than {auto_archieve.day_limit_openchatter} days")
+                    elif lead.day_on_stage > auto_archieve.day_limit:
+                        lead.message_post(body=f"Archived because Day on Stage is {lead.day_on_stage}. It's more than {auto_archieve.day_limit} days")
+                    elif lead.last_update_openchatter < date_day_limit_openchatter:
+                        lead.message_post(body=f"Archived because Day From Last Update Openchatter is {lead.day_on_stage}. It's more than {auto_archieve.day_limit_openchatter} days")
 
 class CRMStageAutoArchieve(models.Model):
     _inherit = "crm.stage_auto_archieve"
